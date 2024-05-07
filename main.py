@@ -65,7 +65,7 @@ def tweet(api: tweepy.API, genius, song_num: int):
 
     tweet = str(verses[num])
     #print(tweet)
-    if len(tweet) > 240: # check if tweet is over X character limit, very likely
+    if len(tweet) > 185: # check if tweet is over X character limit, very likely, leaves space for hashtags to increase viewability
         newtweet = ""
         line = ""
         for letter in tweet: # similar to what was done in the for loop
@@ -73,7 +73,7 @@ def tweet(api: tweepy.API, genius, song_num: int):
             if letter != " ":
                 line += letter
             else:
-                if len(newtweet) + len(line) + 1 <= 240:
+                if len(newtweet) + len(line) + 1 <= 185:
                     #print(len(str(newtweet)) + len(str(line)))
                     newtweet += " "
                     newtweet += line
@@ -91,6 +91,8 @@ def tweet(api: tweepy.API, genius, song_num: int):
 
     if tweet[:5] == "Lyrics":
         tweet = tweet[5:]
+
+    tweet += " #JuiceWRLD #LLJW #LND #DRFL #GBGR #Unreleased #TPNE"
     
     #print(tweet)
 
