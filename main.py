@@ -3,8 +3,6 @@ import keys
 from lyricsgenius import Genius
 from rauth import OAuth1Service
 import random
-import json
-
 
 def tweet(api: tweepy.API, genius, song_num: int):
 # This is the function that sends out the tweet containing a lyric (up to 240 characters) from a given musician/group (Juice WRLD by default) to social media website X
@@ -15,16 +13,30 @@ def tweet(api: tweepy.API, genius, song_num: int):
     page = 1000 # looks for songs within the top 1000 most popular for the given artist
 
     # gets the song ID of a song within the top 1000 most popular songs of an artist 
-    random_id = genius.artist_songs(artist_id, per_page=1, page=random.randint(0, page), sort='popularity')['songs'][0]['id'] 
-    lyrics = genius.search_song(song_id=random_id, get_full_info=True) # obtain lyrics to song
+    random_id = 0
+    while random_id == 0:
+        try:
+            random_id = genius.artist_songs(artist_id, per_page=1, page=random.randint(0, page), sort='popularity')['songs'][0]['id'] 
+        except:
+            print("Random number out of bounds")
+    try:
+        lyrics = genius.search_song(song_id=random_id, get_full_info=True) # obtain lyrics to song
+    except:
+        print("could not find song for song id = ", random_id)
+        random_id = 0
+        while random_id == 0:
+            try:
+                random_id = genius.artist_songs(artist_id, per_page=1, page=random.randint(0, page), sort='popularity')['songs'][0]['id'] 
+            except:
+                print("Random number out of bounds")
+
     lyrics = str(lyrics.lyrics) # convert lyrics to string and get just lyrics
     #print(lyrics)
-    verse = lyrics
     verses = []
     line = ""
     word = ""
     in_lyrics = False # a boolean value, used to remove non lyrical text commonly found on Genius, like "[Chorus]"
-    for letter in verse:
+    for letter in lyrics:
 
         if letter == "[" or letter == "/": # "[" denotes the start of [chrous] for example. The "/" shows up followed by "205", or "2005" and is in the place of spaces, not sure why
             if letter == "[" and in_lyrics == True: # end of verse/chorus found
@@ -61,8 +73,11 @@ def tweet(api: tweepy.API, genius, song_num: int):
                 word += letter # add letter to word
     # end of for loop
 
-    num = random.randrange(1, len(verses), 1) # choose random verse
-
+    try:
+        num = random.randrange(1, len(verses), 1) # choose random verse
+    except:
+        print("presumably, song did not have a '[' anywhere in the set of lyrics", genius.search_song(song_id=random_id, get_full_info=True))
+        num = 0
     tweet = str(verses[num])
     #print(tweet)
     if len(tweet) > 185: # check if tweet is over X character limit, very likely, leaves space for hashtags to increase viewability
