@@ -3,6 +3,7 @@ import keys
 from lyricsgenius import Genius
 from rauth import OAuth1Service
 import random
+import time
 
 def tweet(api: tweepy.API, genius, song_num: int):
 # This is the function that sends out the tweet containing a lyric (up to 240 characters) from a given musician/group (Juice WRLD by default) to social media website X
@@ -134,8 +135,21 @@ if __name__ == '__main__':
         access_token=keys.access_token_twit,
         access_token_secret=keys.access_token_secret_twit,
         consumer_key=keys.api_key_twit,
-        consumer_secret=keys.api_secret_twit,
+        consumer_secret=keys.api_secret_twit
     )
     genius = Genius(keys.access_token_genius) # gain access to the genius API, key via https://docs.genius.com/
     num = random.randrange(1, 1000, 1) # pick a number for the song on the musician/group top 1000 most popular
     tweet(newapi, genius, num) # function call for the tweet to be made and sent
+    min_time = 14400 # 4 hours in seconds
+    max_time = 619200 # 1 week + 4 hours
+
+    while True:
+        # Generate a random time interval
+        interval = random.randint(min_time, max_time)
+        
+        # Wait for the random time interval
+        time.sleep(interval)
+        
+        # Trigger the tweet
+        num = random.randrange(1, 1000, 1) # pick a number for the song on the musician/group top 1000 most popular
+        tweet(newapi, genius, num) # function call for the tweet to be made and sent
