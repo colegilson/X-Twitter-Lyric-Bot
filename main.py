@@ -147,6 +147,21 @@ if __name__ == '__main__':
         # Generate a random time interval
         interval = random.randint(min_time, max_time)
         
+        # calculate time until next post 
+        seconds = interval
+        minutes = seconds // 60
+        seconds -= (minutes * 60)
+        
+        hours = minutes // 60
+        minutes -= (hours * 60)
+
+        days = hours // 24
+        if days != 0:
+            hours -= (days * 24)
+            print(f'next tweet scheduled for {days} days, {hours} hours, {minutes} minutes and {seconds} seconds from now!')
+        else:
+            print(f'next tweet scheduled for {hours} hours, {minutes} minutes and {seconds} seconds from now!')
+        
         # Wait for the random time interval
         time.sleep(interval)
         
